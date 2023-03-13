@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
+        android:enableOnBackInvokedCallback="true"
         android:label="LingoOwl"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
@@ -42,13 +43,16 @@
         <meta-data 
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token"/>
-
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+        
         <service android:name="me.carda.awesome_notifications.core.services.ForegroundService"
-          android:enabled="true"            
-          android:exported="false"
-          android:stopWithTask="true"
-          android:foregroundServiceType="mediaPlayback"
-          tools:replace="android:foregroundServiceType">
+            android:enabled="true"            
+            android:exported="false"
+            android:stopWithTask="true"
+            android:foregroundServiceType="mediaPlayback"
+            tools:replace="android:foregroundServiceType">
         </service>
     </application>
     <queries>

@@ -42,3 +42,16 @@ Future<void> showNotImplementedAlertDialog({required BuildContext context}) =>
       context: context,
       title: 'Not implemented',
     );
+
+Future<void> showSignInRequiredDialog({
+  required BuildContext context,
+  String? content,
+}) =>
+    showAlertDialog(
+      context: context,
+      title: 'Sign in required!',
+      content: content,
+      cancelActionText: 'Cancel',
+      defaultActionText: 'Sign in',
+      onConfirmPressed: LCoordinator.showSignInScreen,
+    );

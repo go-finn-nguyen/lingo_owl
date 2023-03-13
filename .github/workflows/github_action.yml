@@ -39,6 +39,9 @@ jobs:
         env:
           SECRETS_PROPERTIES: ${{ secrets.STRINGS_XML }}
         run: echo "${{ secrets.STRINGS_XML }}" | base64 -d > android/app/src/main/res/values/strings.xml
+      
+      - name: Decode secret_keys.json file
+        run: echo "${{ secrets.SECRET_KEYS_JSON }}" | base64 -d > secret_keys.json
 
       - id: flutter-build
         name: Flutter Build
@@ -73,7 +76,7 @@ jobs:
 
           Write-Host "Building $buildCommands $versionString"
 
-          flutter build $buildCommands --release --build-name $versionString --build-number '${{ github.run_number }}'
+          flutter build $buildCommands --release --build-name $versionString --build-number '${{ github.run_number }}' --dart-define-from-file=secret_keys.json
           Write-Host "name=version::$versionString" >> $GITHUB_OUTPUT
 
           if ($isRelease -eq 'true') {

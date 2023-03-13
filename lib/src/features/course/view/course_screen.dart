@@ -10,6 +10,7 @@ import '../../../widgets/state/loading/loading.dart';
 import '../../authentication/data/authentication_repository.dart';
 import '../../cart/view/add_to_cart/add_to_cart_button.dart';
 import '../../cart/view/cart_icon_button/cart_icon_button.dart';
+import '../../checkout/view/buy_button.dart';
 import '../../rating_count/data/rating_count_repository.dart';
 import '../../rating_count/view/review_star_count_section.dart';
 import '../../reviews/application/review_service.dart';
@@ -87,12 +88,9 @@ class CourseScreen extends ConsumerWidget {
                           isLargeText: true,
                         ),
                         Gaps.h16,
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {},
-                            child: const Text('Buy now'),
-                          ),
+                        BuyButton(
+                          courseId: courseId,
+                          price: course.salePrice ?? course.price,
                         ),
                         Consumer(
                           builder: (context, ref, child) {

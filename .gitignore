@@ -46,3 +46,4 @@ app.*.map.json
 /android/app/src/main/res/values/strings.xml
 /.firebase
 functions/package-lock.json
+/secret_keys.json
