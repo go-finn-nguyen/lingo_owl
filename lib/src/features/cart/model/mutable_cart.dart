@@ -29,4 +29,12 @@ extension MutableCart on LCart {
     update.remove(courseId);
     return LCart(courses: update);
   }
+
+  LCart removeItems(List<CourseId> courseIds) {
+    final update = Map<CourseId, TimeStamp>.from(courses);
+    for (var courseId in courseIds) {
+      update.remove(courseId);
+    }
+    return LCart(courses: update);
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../../constants/type_defs/type_defs.dart';
 
 part 'item.freezed.dart';

@@ -20,6 +20,7 @@ LOrder _$LOrderFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LOrder {
+  String get id => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
   int get timeStamp => throw _privateConstructorUsedError;
   List<LItem> get items => throw _privateConstructorUsedError;
@@ -34,7 +35,7 @@ abstract class $LOrderCopyWith<$Res> {
   factory $LOrderCopyWith(LOrder value, $Res Function(LOrder) then) =
       _$LOrderCopyWithImpl<$Res, LOrder>;
   @useResult
-  $Res call({String uid, int timeStamp, List<LItem> items});
+  $Res call({String id, String uid, int timeStamp, List<LItem> items});
 }
 
 /// @nodoc
@@ -50,11 +51,16 @@ class _$LOrderCopyWithImpl<$Res, $Val extends LOrder>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? uid = null,
     Object? timeStamp = null,
     Object? items = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -77,7 +83,7 @@ abstract class _$$_LOrderCopyWith<$Res> implements $LOrderCopyWith<$Res> {
       __$$_LOrderCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String uid, int timeStamp, List<LItem> items});
+  $Res call({String id, String uid, int timeStamp, List<LItem> items});
 }
 
 /// @nodoc
@@ -90,11 +96,16 @@ class __$$_LOrderCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? uid = null,
     Object? timeStamp = null,
     Object? items = null,
   }) {
     return _then(_$_LOrder(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       uid: null == uid
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
@@ -115,7 +126,8 @@ class __$$_LOrderCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_LOrder extends _LOrder {
   const _$_LOrder(
-      {required this.uid,
+      {required this.id,
+      required this.uid,
       required this.timeStamp,
       required final List<LItem> items})
       : _items = items,
@@ -124,6 +136,8 @@ class _$_LOrder extends _LOrder {
   factory _$_LOrder.fromJson(Map<String, dynamic> json) =>
       _$$_LOrderFromJson(json);
 
+  @override
+  final String id;
   @override
   final String uid;
   @override
@@ -138,7 +152,7 @@ class _$_LOrder extends _LOrder {
 
   @override
   String toString() {
-    return 'LOrder(uid: $uid, timeStamp: $timeStamp, items: $items)';
+    return 'LOrder(id: $id, uid: $uid, timeStamp: $timeStamp, items: $items)';
   }
 
   @override
@@ -146,6 +160,7 @@ class _$_LOrder extends _LOrder {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_LOrder &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.timeStamp, timeStamp) ||
                 other.timeStamp == timeStamp) &&
@@ -154,8 +169,8 @@ class _$_LOrder extends _LOrder {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, uid, timeStamp, const DeepCollectionEquality().hash(_items));
+  int get hashCode => Object.hash(runtimeType, id, uid, timeStamp,
+      const DeepCollectionEquality().hash(_items));
 
   @JsonKey(ignore: true)
   @override
@@ -173,13 +188,16 @@ class _$_LOrder extends _LOrder {
 
 abstract class _LOrder extends LOrder {
   const factory _LOrder(
-      {required final String uid,
+      {required final String id,
+      required final String uid,
       required final int timeStamp,
       required final List<LItem> items}) = _$_LOrder;
   const _LOrder._() : super._();
 
   factory _LOrder.fromJson(Map<String, dynamic> json) = _$_LOrder.fromJson;
 
+  @override
+  String get id;
   @override
   String get uid;
   @override

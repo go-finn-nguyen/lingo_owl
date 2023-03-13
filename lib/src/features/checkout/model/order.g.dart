@@ -7,6 +7,7 @@ part of 'order.dart';
 // **************************************************************************
 
 _$_LOrder _$$_LOrderFromJson(Map<String, dynamic> json) => _$_LOrder(
+      id: json['id'] as String,
       uid: json['uid'] as String,
       timeStamp: json['timeStamp'] as int,
       items: (json['items'] as List<dynamic>)
@@ -15,7 +16,8 @@ _$_LOrder _$$_LOrderFromJson(Map<String, dynamic> json) => _$_LOrder(
     );
 
 Map<String, dynamic> _$$_LOrderToJson(_$_LOrder instance) => <String, dynamic>{
+      'id': instance.id,
       'uid': instance.uid,
       'timeStamp': instance.timeStamp,
-      'items': instance.items,
+      'items': instance.items.map((e) => e.toJson()).toList(),
     };

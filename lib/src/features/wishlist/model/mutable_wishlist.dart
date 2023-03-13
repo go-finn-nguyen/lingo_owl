@@ -29,4 +29,12 @@ extension MutableWishlist on LWishList {
     update.remove(courseId);
     return LWishList(courses: update);
   }
+
+  LWishList removeItems(List<CourseId> courseIds) {
+    final update = Map<CourseId, TimeStamp>.from(courses);
+    for (var courseId in courseIds) {
+      update.remove(courseId);
+    }
+    return LWishList(courses: update);
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 import '../router/coordinator.dart';
 import '../widgets/common/snack_bars.dart';
@@ -8,28 +9,30 @@ import 'logger.dart';
 
 extension AsyncValueUi on AsyncValue {
   void showError(BuildContext context, {String? errorMessage}) {
-    if (!isRefreshing && hasError) {
-      if (error is! FirebaseException) {
-        log.e(
-          '-------ERROR-------',
-          error,
-          stackTrace,
-        );
-        return;
-      }
+    if (isRefreshing || !hasError) return;
 
-      final firebaseError = error as FirebaseException;
+    late String? errorMessage;
 
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          LSnackBar.failure(
-            errorMessage: errorMessage ??
-                firebaseError.message ??
-                'An error has occurred!',
-          ),
-        );
+    if (error is FirebaseException) {
+      errorMessage = (error as FirebaseException).message;
+    } else if (error is StripeException) {
+      errorMessage = (error as StripeException).error.localizedMessage;
+    } else {
+      log.e(
+        '-------ERROR-------',
+        error,
+        stackTrace,
+      );
+      return;
     }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        LSnackBar.failure(
+          errorMessage: errorMessage ?? 'An error has occurred!',
+        ),
+      );
   }
 
   void showLoadingDialog(BuildContext context, AsyncValue<dynamic>? previous) {

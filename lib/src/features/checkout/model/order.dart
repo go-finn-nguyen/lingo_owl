@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../constants/type_defs/type_defs.dart';
@@ -10,6 +12,7 @@ part 'order.g.dart';
 class LOrder with _$LOrder {
   const LOrder._();
   const factory LOrder({
+    required OrderId id,
     required UserId uid,
     required TimeStamp timeStamp,
     required List<LItem> items,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'utils/logger.dart';
 
 import '../firebase_options.dart';
 
@@ -25,8 +26,9 @@ Future<void> initializeApp() async {
 }
 
 Future<void> _initPayment() async {
-  Stripe.publishableKey =
-      const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY');
+  const publishableKey = String.fromEnvironment('STRIPE_PUBLISHABLE_KEY');
+  log.wtf(publishableKey);
+  Stripe.publishableKey = publishableKey;
   Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
   Stripe.urlScheme = 'flutterstripe';
   await Stripe.instance.applySettings();

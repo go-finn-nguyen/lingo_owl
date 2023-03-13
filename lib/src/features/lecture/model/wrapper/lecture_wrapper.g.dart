@@ -20,6 +20,6 @@ _$_LLectureWrapper _$$_LLectureWrapperFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_LLectureWrapperToJson(_$_LLectureWrapper instance) =>
     <String, dynamic>{
       'courseId': instance.courseId,
-      'lectures': instance.lectures,
-      'sections': instance.sections,
+      'lectures': instance.lectures.map((e) => e.toJson()).toList(),
+      'sections': instance.sections.map((e) => e.toJson()).toList(),
     };

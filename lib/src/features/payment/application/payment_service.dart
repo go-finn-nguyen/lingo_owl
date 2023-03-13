@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 import '../../../domain_manager.dart';
+import '../../../router/coordinator.dart';
+import '../../../utils/logger.dart';
 import '../../checkout/model/order.dart';
 import '../data/payment_repository.dart';
 
@@ -30,36 +32,51 @@ class PaymentService {
         );
       }
 
+      final gPay = PaymentSheetGooglePay(
+        merchantCountryCode: 'US',
+        currencyCode: intent.currencyCode,
+        testEnv: true,
+      );
+
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
+          // customFlow: false,
+          // allowsDelayedPaymentMethods: false,
           merchantDisplayName: 'Owl Learning',
           paymentIntentClientSecret: intent.paymentIntentClientSecret!,
           customerEphemeralKeySecret: intent.ephemeralKeySecret,
           customerId: intent.customerId!,
-          googlePay: PaymentSheetGooglePay(
-            merchantCountryCode: 'VN',
-            currencyCode: intent.currencyCode,
-            testEnv: true,
-          ),
+          googlePay: gPay,
           style: ThemeMode.system,
         ),
       );
+
+      log.wtf('Init completed');
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> showPaymentSheet() async {
-    try {
-      await Stripe.instance.presentPaymentSheet();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> showPaymentSheet({void Function()? onPaymentSuccessful}) async {
+  //   try {
+  //     return Stripe.instance
+  //         .presentPaymentSheet()
+  //         .then((value) => log.wtf('show payment end'));
+  //   } catch (e) {
+  //     log.wtf(e);
+  //     rethrow;
+  //   }
+  // }
 
-  Future<void> confirmPayment() async {
+  Future<void> showPaymentSheet() {
     try {
-      await Stripe.instance.confirmPaymentSheetPayment();
+      return Stripe.instance.presentPaymentSheet().then(
+            (_) => ScaffoldMessenger.of(LCoordinator.context).showSnackBar(
+              const SnackBar(
+                content: Text('Payment successfully completed'),
+              ),
+            ),
+          );
     } catch (e) {
       rethrow;
     }
