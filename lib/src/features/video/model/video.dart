@@ -5,6 +5,7 @@ part 'video.g.dart';
 
 @freezed
 class LVideo with _$LVideo {
+  const LVideo._();
   const factory LVideo({
     /// seconds
     required int duration,
@@ -14,4 +15,8 @@ class LVideo with _$LVideo {
   }) = _LVideo;
 
   factory LVideo.fromJson(Map<String, Object?> json) => _$LVideoFromJson(json);
+
+  MapEntry<String, String> get _defaultUrlMap => urls.entries.first;
+  String get defaultQuality => _defaultUrlMap.key;
+  String get defaultUrl => _defaultUrlMap.value;
 }

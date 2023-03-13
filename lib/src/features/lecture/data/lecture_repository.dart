@@ -5,7 +5,7 @@ import '../../../constants/firestore/collection_name.dart';
 import '../../../constants/type_defs/type_defs.dart';
 import '../../../domain_manager.dart';
 import '../../../utils/base_collection_reference.dart';
-import '../../../utils/provider_params.dart';
+import '../../../utils/params/lecture_name_provider_params/lecture_name_provider_params.dart';
 import '../model/section/section.dart';
 
 final sectionsProvider =

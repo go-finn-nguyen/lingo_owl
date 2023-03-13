@@ -105,10 +105,11 @@ class __$$_LVideoCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_LVideo implements _LVideo {
+class _$_LVideo extends _LVideo {
   const _$_LVideo(
       {required this.duration, required final Map<String, String> urls})
-      : _urls = urls;
+      : _urls = urls,
+        super._();
 
   factory _$_LVideo.fromJson(Map<String, dynamic> json) =>
       _$$_LVideoFromJson(json);
@@ -162,10 +163,11 @@ class _$_LVideo implements _LVideo {
   }
 }
 
-abstract class _LVideo implements LVideo {
+abstract class _LVideo extends LVideo {
   const factory _LVideo(
       {required final int duration,
       required final Map<String, String> urls}) = _$_LVideo;
+  const _LVideo._() : super._();
 
   factory _LVideo.fromJson(Map<String, dynamic> json) = _$_LVideo.fromJson;
 

@@ -6,144 +6,180 @@ import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../../constants/mocks/videos.dart';
+import '../model/video.dart';
 import 'video_view_state.dart';
 
 final videoControllerProvider =
-    StateNotifierProvider<VideoViewController, VideoViewState>((ref) {
+    StateNotifierProvider.autoDispose<VideoViewController, VideoViewState>(
+        (ref) {
   return VideoViewController();
 });
 
 class VideoViewController extends StateNotifier<VideoViewState> {
   VideoViewController() : super(const VideoViewState());
 
-  Timer? timer;
+  Timer? showVideoControllerTimer;
 
-  void onInitComplete(VideoPlayerController controller) {
+  @override
+  void dispose() {
+    _exitFullscreenMode();
+    state.controller?.dispose();
+    super.dispose();
+  }
+
+  void init(LVideo video) async {
+    if (!mounted) return;
+    final quality = state.currentQuality ?? video.defaultQuality;
+    final controller = VideoPlayerController.network(video.urls[quality]!);
+    final asyncValue = await AsyncValue.guard(() => controller.initialize());
     state = state.copyWith(
-      isInitialized: true,
-      status: const AsyncData(null),
+      status: asyncValue,
+      controller: controller,
+      video: video,
+      currentQuality: quality,
+      isInitialized: !asyncValue.hasError,
+      seekTo: video != state.video ? null : state.seekTo,
     );
-    controller.setLooping(false);
-    getVideoLength(controller.value.duration);
-    _play(controller);
+    if (asyncValue.hasError) return;
+
+    controller.addListener(updatePosition);
+    _play(seekTo: state.seekTo);
   }
 
-  void onVideoForward(VideoPlayerController controller) async {
-    final current = controller.value.position;
+  void onVideoForward() async {
+    final current = state.position;
     final position = current + kJumpValue;
-    _seekTo(controller, position);
-    if (state.isPlaying) {
-      _play(controller);
-    }
+    _seekTo(position);
     autoHideController();
   }
 
-  void onVideoBackward(VideoPlayerController controller) async {
-    final current = controller.value.position;
+  void onVideoBackward() async {
+    state = state.copyWith(status: const AsyncLoading());
+    final current = state.position;
     final position = current - kJumpValue;
-    _seekTo(controller, position);
-    if (state.isPlaying) {
-      _play(controller);
-    }
+    _seekTo(position);
     autoHideController();
   }
 
-  void onPlayPressed(VideoPlayerController controller) {
-    _play(controller);
+  void onPlayPressed() {
+    _play();
     hideController();
   }
 
-  void onPausePressed(VideoPlayerController controller) {
-    _pause(controller);
+  void onPausePressed() {
+    _pause();
     autoHideController();
   }
 
   void showController() {
+    if (!mounted) return;
     state = state.copyWith(showController: true);
     autoHideController();
   }
 
   void hideController() {
+    if (!mounted) return;
     state = state.copyWith(showController: false);
   }
 
-  /// Update current time
-  void updateOnPlaying({required Duration position}) {
-    state = state.copyWith(position: position);
-  }
-
-  void getVideoLength(Duration duration) {
-    state = state.copyWith(duration: duration);
-  }
-
   void autoHideController() {
-    timer?.cancel();
-    timer = Timer(kAutoHideValue, hideController);
+    if (!mounted) return;
+    showVideoControllerTimer?.cancel();
+    showVideoControllerTimer = Timer(kAutoHideValue, hideController);
   }
 
-  void onHorizontalDragStart(VideoPlayerController controller) {
+  void onHorizontalDragStart() {
     state = state.copyWith(status: const AsyncLoading());
-    timer?.cancel();
-    _pause(controller);
+    showVideoControllerTimer?.cancel();
+    _pause();
   }
 
-  void onHorizontalDragUpdate(
-      VideoPlayerController controller, double relativePosition) {
-    final position = controller.value.duration * relativePosition;
-    _seekTo(controller, position);
+  void onHorizontalDragUpdate(double relativePosition) {
+    final position = state.duration * relativePosition;
+    _seekTo(position);
   }
 
-  void onHorizontalDragEnd(VideoPlayerController controller) {
-    _play(controller);
+  void onHorizontalDragEnd() {
+    _play();
     autoHideController();
   }
 
-  void onTapDown(VideoPlayerController controller, double relativePosition) {
+  void onTapDown(double relativePosition) {
     state = state.copyWith(status: const AsyncLoading());
-    final position = controller.value.duration * relativePosition;
-    _seekTo(controller, position);
-    onHorizontalDragEnd(controller);
+    final position = state.duration * relativePosition;
+    _seekTo(position);
+    onHorizontalDragEnd();
   }
 
   void onFullscreenButtonPressed() async {
-    try {
-      await _enterFullscreenMode();
-      state = state.copyWith(isFullscreen: true);
-    } catch (e) {
-      state = state.copyWith(status: AsyncError(e, StackTrace.current));
-    }
+    final asyncValue = await AsyncValue.guard(() => _enterFullscreenMode());
+    state = state.copyWith(
+      status: asyncValue,
+      isFullscreen: !asyncValue.hasError,
+    );
   }
 
   void onExitFullscreenButtonPressed() async {
-    try {
-      await _exitFullscreenMode();
-      state = state.copyWith(isFullscreen: false);
-    } catch (e) {
-      state = state.copyWith(status: AsyncError(e, StackTrace.current));
-    }
+    final asyncValue = await AsyncValue.guard(() => _exitFullscreenMode());
+    state = state.copyWith(
+      status: asyncValue,
+      isFullscreen: asyncValue.hasError,
+    );
   }
 
-  void onAddNoteButtonPressed(VideoPlayerController controller) =>
-      _pause(controller);
+  void onAddNoteButtonPressed() => _pause();
 
-  void _seekTo(VideoPlayerController controller, Duration position) async {
+  void onVideoQualityChange(String quality) async {
+    state = state.copyWith(
+      seekTo: state.position,
+      currentQuality: quality,
+      status: const AsyncLoading(),
+    );
+    await state.controller?.dispose();
+    init(state.video!);
+  }
+
+  void onVideoChanged() async {
+    await state.controller?.dispose();
+    state = state.copyWith(
+      status: const AsyncLoading(),
+      isInitialized: false,
+      controller: null,
+    );
+  }
+
+  void updatePosition([Duration? position]) {
+    if (state.controller == null) return;
+    state =
+        state.copyWith(position: position ?? state.controller!.value.position);
+  }
+
+  void _seekTo(Duration position) async {
+    if (!mounted) return;
     final asyncValue =
-        await AsyncValue.guard(() => controller.seekTo(position));
+        await AsyncValue.guard(() => state.controller!.seekTo(position));
     state = state.copyWith(status: asyncValue);
   }
 
-  void _play(VideoPlayerController controller) async {
-    final asyncValue = await AsyncValue.guard(() => controller.play());
+  void _play({Duration? seekTo}) async {
+    if (!mounted) return;
+
+    final futures = <Future<dynamic>>[
+      state.controller!.play(),
+      if (seekTo != null) state.controller!.seekTo(seekTo),
+    ];
+    final asyncValue = await AsyncValue.guard(
+      () => Future.wait(futures),
+    );
     state = state.copyWith(
-      isPlaying: asyncValue.hasError ? state.isPlaying : true,
       status: asyncValue,
     );
   }
 
-  void _pause(VideoPlayerController controller) async {
-    final asyncValue = await AsyncValue.guard(() => controller.pause());
+  void _pause() async {
+    if (!mounted) return;
+    final asyncValue = await AsyncValue.guard(() => state.controller!.pause());
     state = state.copyWith(
-      isPlaying: asyncValue.hasError ? state.isPlaying : false,
       status: asyncValue,
     );
   }
@@ -170,13 +206,5 @@ class VideoViewController extends StateNotifier<VideoViewState> {
         DeviceOrientation.portraitUp,
       ]),
     ]);
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    _exitFullscreenMode().then(
-      (_) => super.dispose(),
-    );
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../model/lecture/lecture.dart';
 
 import '../../../../constants/app_parameters/app_sizes.dart';
 import '../../../../constants/type_defs/type_defs.dart';
 import '../../../../widgets/dialog/alert_dialog.dart';
+import '../../../video/view/video_view_controller.dart';
+import '../../model/lecture/lecture.dart';
 import '../../model/section/section.dart';
 import '../lecture_screen_controller.dart';
 import 'lecture_list_tile.dart';
@@ -64,10 +65,17 @@ class _LectureSectionState extends ConsumerState<LectureSection> {
           (index) {
             final lecture = sortedLectures[index];
             return LectureListTile(
-              onTap: () => ref
-                  .read(
-                      lectureScreenControllerProvider(widget.courseId).notifier)
-                  .onLectureTileTapped(lecture),
+              onTap: widget.selectedIndex == lecture.index
+                  ? null
+                  : () {
+                      ref
+                          .read(lectureScreenControllerProvider(widget.courseId)
+                              .notifier)
+                          .onLectureTileTapped(lecture);
+                      ref
+                          .read(videoControllerProvider.notifier)
+                          .onVideoChanged();
+                    },
               lecture: lecture,
               isSelected: lecture.index == widget.selectedIndex,
             );

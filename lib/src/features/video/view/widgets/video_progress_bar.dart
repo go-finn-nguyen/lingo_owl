@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../utils/text_helpers.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../themes/colors.dart';
@@ -10,62 +9,68 @@ import '../video_view_controller.dart';
 class VideoProgressBar extends ConsumerWidget {
   const VideoProgressBar({
     super.key,
-    required this.controller,
+    required this.duration,
+    required this.onPositionChange,
   });
 
-  final VideoPlayerController controller;
+  final Duration duration;
+  final void Function(Duration position) onPositionChange;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    int position = controller.value.position.inMilliseconds;
-    // * Avoid assign with 0;
-    int duration = max(controller.value.duration.inMilliseconds, 1);
-    int maxBuffering = 0;
-    for (final DurationRange range in controller.value.buffered) {
+    final controller =
+        ref.watch(videoControllerProvider.select((value) => value.controller));
+    final textHelpers = ref.watch(textHelpersProvider);
+    final durationInMilliseconds = duration.inMilliseconds;
+
+    int maxBufferingInMilliseconds = 0;
+    for (final DurationRange range
+        in controller?.value.buffered ?? List.empty()) {
       final int end = range.end.inMilliseconds;
-      if (end > maxBuffering) {
-        maxBuffering = end;
+      if (end > maxBufferingInMilliseconds) {
+        maxBufferingInMilliseconds = end;
       }
     }
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      child: ProgressIndicator(
-        hasBuffer: controller.value.buffered.isNotEmpty,
-        bufferValue: maxBuffering / duration,
-        relativePosition: position / duration,
+      child: Builder(
+        builder: (context) {
+          final position = ref
+              .watch(videoControllerProvider.select((value) => value.position));
+          final hasBuffer = ref.watch(
+              videoControllerProvider.select((value) => value.hasBuffer));
+          return _ProgressIndicator(
+            hasBuffer: hasBuffer,
+            bufferValue: maxBufferingInMilliseconds / durationInMilliseconds,
+            relativePosition: position.inMilliseconds / durationInMilliseconds,
+          );
+        },
       ),
       onHorizontalDragStart: (_) {
-        ref
-            .read(videoControllerProvider.notifier)
-            .onHorizontalDragStart(controller);
+        ref.read(videoControllerProvider.notifier).onHorizontalDragStart();
       },
       onHorizontalDragUpdate: (details) {
         final relativePosition =
             _calculateRelativePosition(context, details.globalPosition);
         ref
             .read(videoControllerProvider.notifier)
-            .onHorizontalDragUpdate(controller, relativePosition);
+            .onHorizontalDragUpdate(relativePosition);
       },
       onHorizontalDragEnd: (_) {
-        ref
-            .read(videoControllerProvider.notifier)
-            .onHorizontalDragEnd(controller);
+        ref.read(videoControllerProvider.notifier).onHorizontalDragEnd();
       },
       onTapDown: (details) {
         final relativePosition =
             _calculateRelativePosition(context, details.globalPosition);
-        ref
-            .read(videoControllerProvider.notifier)
-            .onTapDown(controller, relativePosition);
+        ref.read(videoControllerProvider.notifier).onTapDown(relativePosition);
       },
     );
   }
 }
 
-class ProgressIndicator extends StatelessWidget {
-  const ProgressIndicator({
-    super.key,
+class _ProgressIndicator extends StatelessWidget {
+  const _ProgressIndicator({
     required this.hasBuffer,
     required this.bufferValue,
     required this.relativePosition,

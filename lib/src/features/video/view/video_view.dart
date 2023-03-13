@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../model/video.dart';
+import '../../../utils/async_value_ui.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants/app_parameters/app_parameters.dart';
@@ -10,77 +12,55 @@ import 'widgets/video_bottom_controller_widget.dart';
 import 'widgets/video_mid_controller_widget.dart';
 import 'widgets/video_top_controller_widget.dart';
 
-class VideoView extends StatelessWidget {
+class VideoView extends ConsumerStatefulWidget {
   const VideoView({
     super.key,
-    required this.url,
+    required this.video,
   });
 
-  final String? url;
+  final LVideo video;
 
   @override
-  Widget build(BuildContext context) {
-    return url == null
-        ? const VideoLoading()
-        : LVideoPlayer(
-            videoUrl: url!,
-            key: ValueKey(url),
-          );
-  }
+  ConsumerState<VideoView> createState() => _VideoViewState();
 }
 
-class LVideoPlayer extends ConsumerStatefulWidget {
-  const LVideoPlayer({super.key, required this.videoUrl});
-
-  final String videoUrl;
-
-  @override
-  ConsumerState<LVideoPlayer> createState() => _LVideoPlayerState();
-}
-
-class _LVideoPlayerState extends ConsumerState<LVideoPlayer> {
-  late VideoPlayerController _controller;
-
+class _VideoViewState extends ConsumerState<VideoView> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then(
-        (_) {
-          ref
-              .read(videoControllerProvider.notifier)
-              .onInitComplete(_controller);
-
-          _controller.addListener(() => _listener(ref));
-        },
-      );
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(() => _listener(ref));
-    _controller.dispose();
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(videoControllerProvider.notifier).init(widget.video);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(videoControllerProvider.select((value) => value.status),
+        (previous, next) {
+      next.showError(context);
+    });
+
     final isInitialized = ref
         .watch(videoControllerProvider.select((value) => value.isInitialized));
-    final isFullscreenModeOn = ref
-        .watch(videoControllerProvider.select((value) => value.isFullscreen));
-    final size = MediaQuery.of(context).size;
     return isInitialized
         ? Center(
             child: FittedBox(
               fit: BoxFit.cover,
-              child: SizedBox.fromSize(
-                size: isFullscreenModeOn
-                    ? size
-                    : Size(
-                        size.width,
-                        size.width / UiParameters.videoAspectRatio,
-                      ),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final isFullscreenModeOn = ref.watch(videoControllerProvider
+                      .select((value) => value.isFullscreen));
+                  final size = MediaQuery.of(context).size;
+                  return SizedBox.fromSize(
+                    size: isFullscreenModeOn
+                        ? size
+                        : Size(
+                            size.width,
+                            size.width / UiParameters.videoAspectRatio,
+                          ),
+                    child: child,
+                  );
+                },
                 child: AspectRatio(
                   aspectRatio: UiParameters.videoAspectRatio,
                   child: ColoredBox(
@@ -98,16 +78,23 @@ class _LVideoPlayerState extends ConsumerState<LVideoPlayer> {
                             if (details.localPosition.dx < box.size.width / 2) {
                               ref
                                   .read(videoControllerProvider.notifier)
-                                  .onVideoBackward(_controller);
+                                  .onVideoBackward();
                             } else {
                               ref
                                   .read(videoControllerProvider.notifier)
-                                  .onVideoForward(_controller);
+                                  .onVideoForward();
                             }
                           },
                           child: AspectRatio(
                             aspectRatio: UiParameters.videoAspectRatio,
-                            child: VideoPlayer(_controller),
+                            child: Consumer(builder: (context, ref, child) {
+                              final controller = ref.watch(
+                                  videoControllerProvider
+                                      .select((value) => value.controller));
+                              return controller == null
+                                  ? const VideoLoading()
+                                  : VideoPlayer(controller);
+                            }),
                           ),
                         ),
                         Consumer(builder: (context, ref, child) {
@@ -115,9 +102,7 @@ class _LVideoPlayerState extends ConsumerState<LVideoPlayer> {
                               .select((state) => state.showController));
                           return Visibility(
                             visible: visible,
-                            child: VideoControllerWidget(
-                              controller: _controller,
-                            ),
+                            child: const VideoControllerWidget(),
                           );
                         }),
                       ],
@@ -129,21 +114,10 @@ class _LVideoPlayerState extends ConsumerState<LVideoPlayer> {
           )
         : const VideoLoading();
   }
-
-  void _listener(WidgetRef ref) {
-    ref.read(videoControllerProvider.notifier).updateOnPlaying(
-          position: _controller.value.position,
-        );
-  }
 }
 
 class VideoControllerWidget extends ConsumerWidget {
-  const VideoControllerWidget({
-    super.key,
-    required this.controller,
-  });
-
-  final VideoPlayerController controller;
+  const VideoControllerWidget({super.key});
 
   Color get _color => Colors.white;
   ColorScheme get _colorScheme => ColorScheme.fromSeed(
@@ -179,14 +153,12 @@ class VideoControllerWidget extends ConsumerWidget {
             behavior: HitTestBehavior.opaque,
             onTap: ref.read(videoControllerProvider.notifier).hideController,
             child: Column(
-              children: [
-                VideoTopControllerWidget(controller: controller),
-                const Spacer(),
-                VideoMidControllerWidget(controller: controller),
-                const Spacer(),
-                VideoBottomControllerWidget(
-                  controller: controller,
-                )
+              children: const [
+                VideoTopControllerWidget(),
+                Spacer(),
+                VideoMidControllerWidget(),
+                Spacer(),
+                VideoBottomControllerWidget()
               ],
             ),
           ),

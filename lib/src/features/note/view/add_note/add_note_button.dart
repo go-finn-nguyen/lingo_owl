@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../authentication/data/authentication_repository.dart';
 
-import '../../../../constants/type_defs/type_defs.dart';
 import '../../../../router/coordinator.dart';
+import '../../../authentication/data/authentication_repository.dart';
 import '../../../lecture/view/lecture_screen_controller.dart';
 import 'add_note_bottom_sheet.dart';
 import 'add_note_controller.dart';

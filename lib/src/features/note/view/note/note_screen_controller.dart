@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/note_repository.dart';
 
 import '../../../../constants/type_defs/type_defs.dart';
 import '../../../../domain_manager.dart';
+import '../../data/note_repository.dart';
 import '../../model/note.dart';
 import 'note_screen_state.dart';
 

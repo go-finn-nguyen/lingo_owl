@@ -16,7 +16,7 @@ class LectureListTile extends ConsumerWidget {
 
   final LLecture lecture;
   final bool isSelected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

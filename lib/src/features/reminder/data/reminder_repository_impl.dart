@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../domain_manager.dart';
 import '../model/reminder.dart';
-
-import 'reminder_repository.dart';
 import 'reminder_collection_reference.dart';
+import 'reminder_repository.dart';
 
 final remindersStreamProvider = StreamProvider<List<LReminder>>((ref) {
   final reminderRepository =

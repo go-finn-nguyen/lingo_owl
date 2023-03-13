@@ -16,13 +16,15 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$VideoViewState {
-  bool get isInitialized => throw _privateConstructorUsedError;
-  bool get showController => throw _privateConstructorUsedError;
   AsyncValue<void> get status => throw _privateConstructorUsedError;
-  bool get isPlaying => throw _privateConstructorUsedError;
-  Duration get position => throw _privateConstructorUsedError;
-  Duration get duration => throw _privateConstructorUsedError;
+  bool get isInitialized => throw _privateConstructorUsedError;
+  VideoPlayerController? get controller => throw _privateConstructorUsedError;
+  bool get showController => throw _privateConstructorUsedError;
   bool get isFullscreen => throw _privateConstructorUsedError;
+  LVideo? get video => throw _privateConstructorUsedError;
+  String? get currentQuality => throw _privateConstructorUsedError;
+  Duration get position => throw _privateConstructorUsedError;
+  Duration? get seekTo => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $VideoViewStateCopyWith<VideoViewState> get copyWith =>
@@ -36,13 +38,17 @@ abstract class $VideoViewStateCopyWith<$Res> {
       _$VideoViewStateCopyWithImpl<$Res, VideoViewState>;
   @useResult
   $Res call(
-      {bool isInitialized,
+      {AsyncValue<void> status,
+      bool isInitialized,
+      VideoPlayerController? controller,
       bool showController,
-      AsyncValue<void> status,
-      bool isPlaying,
+      bool isFullscreen,
+      LVideo? video,
+      String? currentQuality,
       Duration position,
-      Duration duration,
-      bool isFullscreen});
+      Duration? seekTo});
+
+  $LVideoCopyWith<$Res>? get video;
 }
 
 /// @nodoc
@@ -58,44 +64,66 @@ class _$VideoViewStateCopyWithImpl<$Res, $Val extends VideoViewState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isInitialized = null,
-    Object? showController = null,
     Object? status = null,
-    Object? isPlaying = null,
-    Object? position = null,
-    Object? duration = null,
+    Object? isInitialized = null,
+    Object? controller = freezed,
+    Object? showController = null,
     Object? isFullscreen = null,
+    Object? video = freezed,
+    Object? currentQuality = freezed,
+    Object? position = null,
+    Object? seekTo = freezed,
   }) {
     return _then(_value.copyWith(
-      isInitialized: null == isInitialized
-          ? _value.isInitialized
-          : isInitialized // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showController: null == showController
-          ? _value.showController
-          : showController // ignore: cast_nullable_to_non_nullable
-              as bool,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AsyncValue<void>,
-      isPlaying: null == isPlaying
-          ? _value.isPlaying
-          : isPlaying // ignore: cast_nullable_to_non_nullable
+      isInitialized: null == isInitialized
+          ? _value.isInitialized
+          : isInitialized // ignore: cast_nullable_to_non_nullable
               as bool,
-      position: null == position
-          ? _value.position
-          : position // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      duration: null == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration,
+      controller: freezed == controller
+          ? _value.controller
+          : controller // ignore: cast_nullable_to_non_nullable
+              as VideoPlayerController?,
+      showController: null == showController
+          ? _value.showController
+          : showController // ignore: cast_nullable_to_non_nullable
+              as bool,
       isFullscreen: null == isFullscreen
           ? _value.isFullscreen
           : isFullscreen // ignore: cast_nullable_to_non_nullable
               as bool,
+      video: freezed == video
+          ? _value.video
+          : video // ignore: cast_nullable_to_non_nullable
+              as LVideo?,
+      currentQuality: freezed == currentQuality
+          ? _value.currentQuality
+          : currentQuality // ignore: cast_nullable_to_non_nullable
+              as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      seekTo: freezed == seekTo
+          ? _value.seekTo
+          : seekTo // ignore: cast_nullable_to_non_nullable
+              as Duration?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $LVideoCopyWith<$Res>? get video {
+    if (_value.video == null) {
+      return null;
+    }
+
+    return $LVideoCopyWith<$Res>(_value.video!, (value) {
+      return _then(_value.copyWith(video: value) as $Val);
+    });
   }
 }
 
@@ -108,13 +136,18 @@ abstract class _$$_VideoViewStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool isInitialized,
+      {AsyncValue<void> status,
+      bool isInitialized,
+      VideoPlayerController? controller,
       bool showController,
-      AsyncValue<void> status,
-      bool isPlaying,
+      bool isFullscreen,
+      LVideo? video,
+      String? currentQuality,
       Duration position,
-      Duration duration,
-      bool isFullscreen});
+      Duration? seekTo});
+
+  @override
+  $LVideoCopyWith<$Res>? get video;
 }
 
 /// @nodoc
@@ -128,84 +161,99 @@ class __$$_VideoViewStateCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isInitialized = null,
-    Object? showController = null,
     Object? status = null,
-    Object? isPlaying = null,
-    Object? position = null,
-    Object? duration = null,
+    Object? isInitialized = null,
+    Object? controller = freezed,
+    Object? showController = null,
     Object? isFullscreen = null,
+    Object? video = freezed,
+    Object? currentQuality = freezed,
+    Object? position = null,
+    Object? seekTo = freezed,
   }) {
     return _then(_$_VideoViewState(
-      isInitialized: null == isInitialized
-          ? _value.isInitialized
-          : isInitialized // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showController: null == showController
-          ? _value.showController
-          : showController // ignore: cast_nullable_to_non_nullable
-              as bool,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AsyncValue<void>,
-      isPlaying: null == isPlaying
-          ? _value.isPlaying
-          : isPlaying // ignore: cast_nullable_to_non_nullable
+      isInitialized: null == isInitialized
+          ? _value.isInitialized
+          : isInitialized // ignore: cast_nullable_to_non_nullable
               as bool,
-      position: null == position
-          ? _value.position
-          : position // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      duration: null == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration,
+      controller: freezed == controller
+          ? _value.controller
+          : controller // ignore: cast_nullable_to_non_nullable
+              as VideoPlayerController?,
+      showController: null == showController
+          ? _value.showController
+          : showController // ignore: cast_nullable_to_non_nullable
+              as bool,
       isFullscreen: null == isFullscreen
           ? _value.isFullscreen
           : isFullscreen // ignore: cast_nullable_to_non_nullable
               as bool,
+      video: freezed == video
+          ? _value.video
+          : video // ignore: cast_nullable_to_non_nullable
+              as LVideo?,
+      currentQuality: freezed == currentQuality
+          ? _value.currentQuality
+          : currentQuality // ignore: cast_nullable_to_non_nullable
+              as String?,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      seekTo: freezed == seekTo
+          ? _value.seekTo
+          : seekTo // ignore: cast_nullable_to_non_nullable
+              as Duration?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_VideoViewState implements _VideoViewState {
+class _$_VideoViewState extends _VideoViewState {
   const _$_VideoViewState(
-      {this.isInitialized = false,
+      {this.status = const AsyncLoading(),
+      this.isInitialized = false,
+      this.controller,
       this.showController = false,
-      this.status = const AsyncLoading(),
-      this.isPlaying = false,
-      this.position = const Duration(),
-      this.duration = const Duration(),
-      this.isFullscreen = false});
+      this.isFullscreen = false,
+      this.video,
+      this.currentQuality,
+      this.position = Duration.zero,
+      this.seekTo})
+      : super._();
 
-  @override
-  @JsonKey()
-  final bool isInitialized;
-  @override
-  @JsonKey()
-  final bool showController;
   @override
   @JsonKey()
   final AsyncValue<void> status;
   @override
   @JsonKey()
-  final bool isPlaying;
+  final bool isInitialized;
+  @override
+  final VideoPlayerController? controller;
+  @override
+  @JsonKey()
+  final bool showController;
+  @override
+  @JsonKey()
+  final bool isFullscreen;
+  @override
+  final LVideo? video;
+  @override
+  final String? currentQuality;
   @override
   @JsonKey()
   final Duration position;
   @override
-  @JsonKey()
-  final Duration duration;
-  @override
-  @JsonKey()
-  final bool isFullscreen;
+  final Duration? seekTo;
 
   @override
   String toString() {
-    return 'VideoViewState(isInitialized: $isInitialized, showController: $showController, status: $status, isPlaying: $isPlaying, position: $position, duration: $duration, isFullscreen: $isFullscreen)';
+    return 'VideoViewState(status: $status, isInitialized: $isInitialized, controller: $controller, showController: $showController, isFullscreen: $isFullscreen, video: $video, currentQuality: $currentQuality, position: $position, seekTo: $seekTo)';
   }
 
   @override
@@ -213,24 +261,35 @@ class _$_VideoViewState implements _VideoViewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_VideoViewState &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.isInitialized, isInitialized) ||
                 other.isInitialized == isInitialized) &&
+            (identical(other.controller, controller) ||
+                other.controller == controller) &&
             (identical(other.showController, showController) ||
                 other.showController == showController) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.isPlaying, isPlaying) ||
-                other.isPlaying == isPlaying) &&
+            (identical(other.isFullscreen, isFullscreen) ||
+                other.isFullscreen == isFullscreen) &&
+            (identical(other.video, video) || other.video == video) &&
+            (identical(other.currentQuality, currentQuality) ||
+                other.currentQuality == currentQuality) &&
             (identical(other.position, position) ||
                 other.position == position) &&
-            (identical(other.duration, duration) ||
-                other.duration == duration) &&
-            (identical(other.isFullscreen, isFullscreen) ||
-                other.isFullscreen == isFullscreen));
+            (identical(other.seekTo, seekTo) || other.seekTo == seekTo));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isInitialized, showController,
-      status, isPlaying, position, duration, isFullscreen);
+  int get hashCode => Object.hash(
+      runtimeType,
+      status,
+      isInitialized,
+      controller,
+      showController,
+      isFullscreen,
+      video,
+      currentQuality,
+      position,
+      seekTo);
 
   @JsonKey(ignore: true)
   @override
@@ -239,30 +298,37 @@ class _$_VideoViewState implements _VideoViewState {
       __$$_VideoViewStateCopyWithImpl<_$_VideoViewState>(this, _$identity);
 }
 
-abstract class _VideoViewState implements VideoViewState {
+abstract class _VideoViewState extends VideoViewState {
   const factory _VideoViewState(
-      {final bool isInitialized,
+      {final AsyncValue<void> status,
+      final bool isInitialized,
+      final VideoPlayerController? controller,
       final bool showController,
-      final AsyncValue<void> status,
-      final bool isPlaying,
+      final bool isFullscreen,
+      final LVideo? video,
+      final String? currentQuality,
       final Duration position,
-      final Duration duration,
-      final bool isFullscreen}) = _$_VideoViewState;
+      final Duration? seekTo}) = _$_VideoViewState;
+  const _VideoViewState._() : super._();
 
-  @override
-  bool get isInitialized;
-  @override
-  bool get showController;
   @override
   AsyncValue<void> get status;
   @override
-  bool get isPlaying;
+  bool get isInitialized;
+  @override
+  VideoPlayerController? get controller;
+  @override
+  bool get showController;
+  @override
+  bool get isFullscreen;
+  @override
+  LVideo? get video;
+  @override
+  String? get currentQuality;
   @override
   Duration get position;
   @override
-  Duration get duration;
-  @override
-  bool get isFullscreen;
+  Duration? get seekTo;
   @override
   @JsonKey(ignore: true)
   _$$_VideoViewStateCopyWith<_$_VideoViewState> get copyWith =>

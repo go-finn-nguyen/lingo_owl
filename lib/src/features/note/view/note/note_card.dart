@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../course/data/course_repository.dart';
-import '../../../lecture/data/lecture_repository.dart';
-import '../../../../utils/provider_params.dart';
 
 import '../../../../constants/app_parameters/app_parameters.dart';
 import '../../../../constants/type_defs/type_defs.dart';
 import '../../../../router/coordinator.dart';
+import '../../../../utils/params/lecture_name_provider_params/lecture_name_provider_params.dart';
 import '../../../../utils/text_helpers.dart';
+import '../../../course/data/course_repository.dart';
+import '../../../lecture/data/lecture_repository.dart';
 import '../../model/note.dart';
 import '../add_note/add_note_bottom_sheet.dart';
 import 'note_screen_controller.dart';
@@ -53,9 +53,15 @@ class NoteCard extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Consumer(builder: (context, ref, child) {
-                                final name = ref.watch(lectureNameProvider(
-                                    LectureNameProviderParams(courseId,
-                                        note.sectionIndex, note.lectureIndex)));
+                                final name = ref.watch(
+                                  lectureNameProvider(
+                                    LectureNameProviderParams(
+                                      courseId: courseId,
+                                      sectionIndex: note.sectionIndex,
+                                      lectureIndex: note.lectureIndex,
+                                    ),
+                                  ),
+                                );
                                 return Text(
                                   name,
                                   maxLines: 1,
